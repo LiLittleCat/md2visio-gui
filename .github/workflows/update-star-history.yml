@@ -1,74 +1,41 @@
-name: Update Star History
-on:
-  schedule:
-    - cron: '0 8 * * *' # 每天 UTC 8点（北京时间 16:00）更新
-  workflow_dispatch: # 允许手动点按钮触发
+name: Generate Snake Animation
 
-permissions:
-  contents: write # 🟢 必须添加：赋予写回仓库的权限
+on:
+  # 每天午夜运行一次
+  schedule:
+    - cron: "0 0 * * *"
+  
+  # 允许手动触发
+  workflow_dispatch:
+  
+  # 当 push 到 main 分支时自动触发
+  push:
+    branches:
+    - main 
 
 jobs:
-  build:
+  generate:
+    permissions: 
+      contents: write
     runs-on: ubuntu-latest
+    timeout-minutes: 5
+    
     steps:
-      - uses: actions/checkout@v3
-      
-      - name: Set up Python
-        uses: actions/setup-python@v4
+      # 第一步：生成贪吃蛇 SVG
+      # 注意：这会生成 'konbakuyomu' 用户的贡献图，而不是这个仓库本身的贡献图
+      - name: generate github-contribution-grid-snake.svg
+        uses: Platane/snk/svg-only@v3
         with:
-          python-version: '3.x'
+          github_user_name: ${{ github.repository_owner }}
+          outputs: |
+            dist/github-contribution-grid-snake.svg
+            dist/github-contribution-grid-snake-dark.svg?palette=github-dark
           
-      - name: Install dependencies
-        run: pip install requests matplotlib
-
-      - name: Generate Star History Graph
-        run: |
-          # 🟢 直接嵌入脚本，不依赖第三方不稳定 Action
-          python -c "
-          import requests
-          import matplotlib.pyplot as plt
-          from datetime import datetime
-          import os
-
-          repo = 'konbakuyomu/md2visio-gui'
-          url = f'https://api.github.com/repos/{repo}/stargazers'
-          headers = {'Accept': 'application/vnd.github.v3.star+json'}
-          
-          # 获取所有 star 数据（注意：GitHub API 分页默认每页30，需处理分页，此处简化演示，实际建议循环获取）
-          # 简单起见，我们直接获取第一页（如果是新项目够用了，大项目需要循环 fetch）
-          stars = []
-          page = 1
-          while True:
-              r = requests.get(url + f'?per_page=100&page={page}', headers=headers)
-              data = r.json()
-              if not data or not isinstance(data, list): break
-              stars.extend(data)
-              page += 1
-          
-          dates = [datetime.strptime(s['starred_at'], '%Y-%m-%dT%H:%M:%SZ') for s in stars]
-          dates.sort()
-          
-          # 生成累积数据
-          x = dates
-          y = range(1, len(dates) + 1)
-          
-          plt.figure(figsize=(10, 6))
-          plt.plot(x, y, marker='o', linestyle='-', color='#40c463')
-          plt.title(f'Star History for {repo}')
-          plt.xlabel('Date')
-          plt.ylabel('Stars')
-          plt.grid(True, linestyle='--', alpha=0.7)
-          plt.tight_layout()
-          
-          # 确保目录存在
-          os.makedirs('docs', exist_ok=True)
-          plt.savefig('docs/star-history.svg')
-          "
-
-      - name: Commit and Push
-        run: |
-          git config --global user.email "action@github.com"
-          git config --global user.name "GitHub Action"
-          git add docs/star-history.svg
-          # 只有文件发生变化时才提交，避免空提交报错
-          git diff --quiet && git diff --staged --quiet || (git commit -m "update star history" && git push)
+      # 第二步：将生成的文件推送到 output 分支
+      - name: push github-contribution-grid-snake.svg to the output branch
+        uses: crazy-max/ghaction-github-pages@v4 # 升级到最新 v4 版本
+        with:
+          target_branch: output
+          build_dir: dist
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
