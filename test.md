@@ -29,6 +29,4 @@ NatAcl -. "控制/策略日志" .-> LogStore
 Decide -. "阻断/放行事件" .-> LogStore
 Xmit -. "会话/转发统计" .-> LogStore
 
-
-
 ```

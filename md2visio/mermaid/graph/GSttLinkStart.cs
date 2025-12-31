@@ -26,7 +26,8 @@ namespace md2visio.mermaid.graph
 
         public static bool IsLinkStart(SynContext ctx)
         {
-            return ctx.Test("^(?<estart>[xo<]?(--(?![-ox>])|==(?![=ox>])))"); // -- or ==
+            // -- or == or -.
+            return ctx.Test(@"^(?<estart>[xo<]?(--(?![-ox>])|==(?![=ox>])|-\.(?![-\.ox>])))");
         }
     }
 }

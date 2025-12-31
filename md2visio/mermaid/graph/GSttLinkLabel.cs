@@ -33,7 +33,13 @@ namespace md2visio.mermaid.graph
             if (ctx.LastState() is not GSttLinkStart) return false;
 
             string tag = ctx.LastState().Fragment.Substring(1, 1);
-            if (!ctx.Test(@$"(?s)^(?<text>.+?)(?=[<xo]?{tag}{{2,}}[{tag}ox>])"))
+
+            // Dotted link uses different end pattern: .- or .-> instead of .. or ..>
+            string endPattern = tag == "."
+                ? @"(?=[<xo]?\.-[-ox>]?)"
+                : @$"(?=[<xo]?{tag}{{2,}}[{tag}ox>])";
+
+            if (!ctx.Test(@$"(?s)^(?<text>.+?){endPattern}"))
                 return false;
 
             Group textGroup = ctx.TestGroups["text"];

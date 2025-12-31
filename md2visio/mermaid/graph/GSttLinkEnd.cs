@@ -27,7 +27,8 @@ namespace md2visio.mermaid.graph
         public static bool IsLinkEnd(SynContext ctx)
         {
             return ctx.Test("^(?<edgeEnd>[<xo]?-{2,}[-ox>])") ||
-                ctx.Test("^(?<edgeEnd>[<xo]?={2,}[=ox>])");
+                ctx.Test("^(?<edgeEnd>[<xo]?={2,}[=ox>])") ||
+                ctx.Test(@"^(?<edgeEnd>[<xo]?\.-[-ox>]?)");
         }
     }
 }
