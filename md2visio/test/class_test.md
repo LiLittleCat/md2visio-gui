@@ -15,9 +15,8 @@ classDiagram
         -int sizeInFeet
         -canEat()
     }
-    
+
     Animal <|-- Duck
     Animal <|-- Fish
     Animal *-- Zebra : Composition
-
 ```

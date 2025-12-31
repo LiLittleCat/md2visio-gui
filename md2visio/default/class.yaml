@@ -1,4 +1,24 @@
 config:
-    # mermaid.mermaidAPI.defaultConfig.class
     class:
         hideEmptyMembersBox: false
+        classWidth: 2.0
+        minClassHeight: 0.6
+        memberHeight: 0.2
+        headerHeight: 0.35
+        horizontalSpacing: 1.2
+        verticalSpacing: 0.8
+        columns: 4
+        namespacePadding: 0.2
+        namespaceBorderPattern: 2
+        fontSize: 9
+        lineWeight: 1
+        connectorWeight: 0.75
+
+    themeVariables:
+        primaryColor: "#FFFFB3"
+        primaryBorderColor: "#AAAA33"
+        primaryTextColor: "#333333"
+        secondaryColor: "#FFFFDE"
+        secondaryBorderColor: "#AAAA33"
+        secondaryTextColor: "#333333"
+        lineColor: "#333333"

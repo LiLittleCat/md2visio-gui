@@ -1,0 +1,74 @@
+name: Update Star History
+on:
+  schedule:
+    - cron: '0 8 * * *' # 每天 UTC 8点（北京时间 16:00）更新
+  workflow_dispatch: # 允许手动点按钮触发
+
+permissions:
+  contents: write # 🟢 必须添加：赋予写回仓库的权限
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+          
+      - name: Install dependencies
+        run: pip install requests matplotlib
+
+      - name: Generate Star History Graph
+        run: |
+          # 🟢 直接嵌入脚本，不依赖第三方不稳定 Action
+          python -c "
+          import requests
+          import matplotlib.pyplot as plt
+          from datetime import datetime
+          import os
+
+          repo = 'konbakuyomu/md2visio-gui'
+          url = f'https://api.github.com/repos/{repo}/stargazers'
+          headers = {'Accept': 'application/vnd.github.v3.star+json'}
+          
+          # 获取所有 star 数据（注意：GitHub API 分页默认每页30，需处理分页，此处简化演示，实际建议循环获取）
+          # 简单起见，我们直接获取第一页（如果是新项目够用了，大项目需要循环 fetch）
+          stars = []
+          page = 1
+          while True:
+              r = requests.get(url + f'?per_page=100&page={page}', headers=headers)
+              data = r.json()
+              if not data or not isinstance(data, list): break
+              stars.extend(data)
+              page += 1
+          
+          dates = [datetime.strptime(s['starred_at'], '%Y-%m-%dT%H:%M:%SZ') for s in stars]
+          dates.sort()
+          
+          # 生成累积数据
+          x = dates
+          y = range(1, len(dates) + 1)
+          
+          plt.figure(figsize=(10, 6))
+          plt.plot(x, y, marker='o', linestyle='-', color='#40c463')
+          plt.title(f'Star History for {repo}')
+          plt.xlabel('Date')
+          plt.ylabel('Stars')
+          plt.grid(True, linestyle='--', alpha=0.7)
+          plt.tight_layout()
+          
+          # 确保目录存在
+          os.makedirs('docs', exist_ok=True)
+          plt.savefig('docs/star-history.svg')
+          "
+
+      - name: Commit and Push
+        run: |
+          git config --global user.email "action@github.com"
+          git config --global user.name "GitHub Action"
+          git add docs/star-history.svg
+          # 只有文件发生变化时才提交，避免空提交报错
+          git diff --quiet && git diff --staged --quiet || (git commit -m "update star history" && git push)
