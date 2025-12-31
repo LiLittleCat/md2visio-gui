@@ -1,6 +1,7 @@
-﻿using md2visio.mermaid.cmn;
-using System.Reflection;
+using md2visio.mermaid.cmn;
+using md2visio.Api;
 using md2visio.vsdx.@base;
+using System.Reflection;
 
 namespace md2visio.struc.figure
 {
@@ -11,11 +12,17 @@ namespace md2visio.struc.figure
         Dictionary<string, Type> builderDict = TypeMap.BuilderMap;
         SttIterator iter;
         int count = 1;
-        bool isFileMode = false; // 标记是否为文件模式
+        bool isFileMode = false;
 
-        public FigureBuilderFactory(SttIterator iter)
+        // 注入的依赖
+        private readonly ConversionContext _context;
+        private readonly IVisioSession _session;
+
+        public FigureBuilderFactory(SttIterator iter, ConversionContext context, IVisioSession session)
         {
             this.iter = iter;
+            this._context = context;
+            this._session = session;
             outputFile = iter.Context.InputFile;
         }
 
@@ -25,100 +32,154 @@ namespace md2visio.struc.figure
             InitOutputPath();
             BuildFigures();
         }
+
         public void BuildFigures()
         {
+            if (_context.Debug)
+            {
+                _context.Log($"[DEBUG] BuildFigures: 开始构建图表");
+                _context.Log($"[DEBUG] BuildFigures: iter.HasNext() = {iter.HasNext()}");
+                if (iter.Context?.StateList != null)
+                {
+                    _context.Log($"[DEBUG] BuildFigures: StateList.Count = {iter.Context.StateList.Count}");
+                    _context.Log($"[DEBUG] BuildFigures: iter.Pos = {iter.Pos}");
+
+                    for (int i = 0; i < iter.Context.StateList.Count; i++)
+                    {
+                        var state = iter.Context.StateList[i];
+                        _context.Log($"[DEBUG] StateList[{i}]: Type={state.GetType().Name}, Fragment='{state.Fragment}'");
+                    }
+                }
+            }
+
             while (iter.HasNext())
             {
                 List<SynState> list = iter.Context.StateList;
                 for (int pos = iter.Pos + 1; pos < list.Count; ++pos)
                 {
                     string word = list[pos].Fragment;
-                    if (SttFigureType.IsFigure(word)) BuildFigure(word);
-                }
-            }            
-        }
-        public void Quit()
-        {
-            if (VBuilder.VisioApp != null)
-            {
-                try
-                {
-                    // 如果不是显示模式，才退出Visio应用程序
-                    if (!md2visio.main.AppConfig.Instance.Visible)
-        {
-            VBuilder.VisioApp.Quit();
-                        VBuilder.VisioApp = null; // 清空静态引用
+
+                    if (_context.Debug)
+                    {
+                        _context.Log($"[DEBUG] BuildFigures: 检查位置 {pos}, Fragment = '{word}'");
+                        _context.Log($"[DEBUG] BuildFigures: SttFigureType.IsFigure('{word}') = {SttFigureType.IsFigure(word)}");
                     }
-                    // 显示模式下保持Visio打开，让用户查看结果
-                }
-                catch (System.Runtime.InteropServices.COMException)
-                {
-                    // 忽略COM异常，可能Visio已经关闭
-                    VBuilder.VisioApp = null; // 清空静态引用
+
+                    if (SttFigureType.IsFigure(word))
+                    {
+                        if (_context.Debug)
+                        {
+                            _context.Log($"[DEBUG] BuildFigures: 找到图表类型 '{word}'，开始构建");
+                        }
+                        BuildFigure(word);
+                    }
                 }
             }
+        }
+
+        public void Quit()
+        {
+            // Quit 逻辑已移至 VisioSession.Dispose()
+            // 此方法保留为空，供向后兼容
         }
 
         void BuildFigure(string figureType)
         {
-            if (!builderDict.ContainsKey(figureType)) 
+            if (_context.Debug)
+            {
+                _context.Log($"[DEBUG] BuildFigure: 开始构建图表类型 '{figureType}'");
+                _context.Log($"[DEBUG] BuildFigure: builderDict.ContainsKey('{figureType}') = {builderDict.ContainsKey(figureType)}");
+            }
+
+            if (!builderDict.ContainsKey(figureType))
                 throw new NotImplementedException($"'{figureType}' builder not implemented");
 
             Type type = builderDict[figureType];
-            object? obj = Activator.CreateInstance(type, iter);
+
+            if (_context.Debug)
+            {
+                _context.Log($"[DEBUG] BuildFigure: Builder类型 = {type.Name}");
+            }
+
+            // 使用注入的 session 和 context 创建 Builder
+            object? obj = Activator.CreateInstance(type, iter, _context, _session);
             MethodInfo? method = type.GetMethod("Build", BindingFlags.Public | BindingFlags.Instance, null,
                 new Type[] { typeof(string) }, null);
 
-            // 根据模式选择文件命名策略
+            if (_context.Debug)
+            {
+                _context.Log($"[DEBUG] BuildFigure: 创建Builder实例成功 = {obj != null}");
+                _context.Log($"[DEBUG] BuildFigure: 找到Build方法 = {method != null}");
+            }
+
             string outputFilePath;
             if (isFileMode)
             {
-                // 文件模式：使用用户指定的文件名
                 outputFilePath = $"{dir}\\{name}.vsdx";
             }
             else
             {
-                // 目录模式：使用计数器区分多个图表
                 outputFilePath = $"{dir}\\{name}{count++}.vsdx";
             }
 
-            // 添加调试日志
-            if (md2visio.main.AppConfig.Instance.Debug)
+            if (_context.Debug)
             {
-                Console.WriteLine($"[DEBUG] 构建图表: {figureType}");
-                Console.WriteLine($"[DEBUG] 输出模式: {(isFileMode ? "文件模式" : "目录模式")}");
-                Console.WriteLine($"[DEBUG] 输出路径: {outputFilePath}");
-                Console.WriteLine($"[DEBUG] 输出目录: {dir}");
-                Console.WriteLine($"[DEBUG] 文件名: {name}");
+                _context.Log($"[DEBUG] 构建图表: {figureType}");
+                _context.Log($"[DEBUG] 输出模式: {(isFileMode ? "文件模式" : "目录模式")}");
+                _context.Log($"[DEBUG] 输出路径: {outputFilePath}");
+                _context.Log($"[DEBUG] 输出目录: {dir}");
+                _context.Log($"[DEBUG] 文件名: {name}");
             }
 
-            method?.Invoke(obj, new object[] { outputFilePath });
+            if (_context.Debug)
+            {
+                _context.Log($"[DEBUG] BuildFigure: 准备调用 {type.Name}.Build('{outputFilePath}')");
+            }
 
-            // 验证文件是否成功生成
-            if (md2visio.main.AppConfig.Instance.Debug)
+            try
+            {
+                method?.Invoke(obj, new object[] { outputFilePath });
+
+                if (_context.Debug)
+                {
+                    _context.Log($"[DEBUG] BuildFigure: {type.Name}.Build() 调用完成");
+                }
+            }
+            catch (Exception ex)
+            {
+                if (_context.Debug)
+                {
+                    _context.Log($"[DEBUG] BuildFigure: {type.Name}.Build() 调用失败: {ex.Message}");
+                    _context.Log($"[DEBUG] BuildFigure: 异常类型: {ex.GetType().Name}");
+                    if (ex.InnerException != null)
+                    {
+                        _context.Log($"[DEBUG] BuildFigure: 内部异常: {ex.InnerException.Message}");
+                    }
+                }
+                throw;
+            }
+
+            if (_context.Debug)
             {
                 if (File.Exists(outputFilePath))
                 {
-                    Console.WriteLine($"[DEBUG] ✅ 文件生成成功: {outputFilePath}");
+                    _context.Log($"[DEBUG] ✅ 文件生成成功: {outputFilePath}");
                 }
                 else
                 {
-                    Console.WriteLine($"[DEBUG] ❌ 文件生成失败: {outputFilePath}");
+                    _context.Log($"[DEBUG] ❌ 文件生成失败: {outputFilePath}");
                 }
             }
         }
 
         void InitOutputPath()
         {
-            // 优先检查是否指定了具体的 .vsdx 文件路径
             if (outputFile.ToLower().EndsWith(".vsdx"))
             {
-                // 文件模式：用户指定了具体的输出文件名
                 isFileMode = true;
                 name = Path.GetFileNameWithoutExtension(outputFile);
                 dir = Path.GetDirectoryName(outputFile);
-                
-                // 确保输出目录存在
+
                 if (!string.IsNullOrEmpty(dir) && !Directory.Exists(dir))
                 {
                     Directory.CreateDirectory(dir);
@@ -126,14 +187,12 @@ namespace md2visio.struc.figure
             }
             else if (Directory.Exists(outputFile))
             {
-                // 目录模式：用户指定了输出目录
                 isFileMode = false;
                 name = Path.GetFileNameWithoutExtension(iter.Context.InputFile);
                 dir = Path.GetFullPath(outputFile).TrimEnd(new char[] { '/', '\\' });
             }
             else
             {
-                // 既不是 .vsdx 文件也不是存在的目录
                 throw new ArgumentException($"输出路径无效: '{outputFile}'。请指定一个 .vsdx 文件路径或现有目录。");
             }
         }

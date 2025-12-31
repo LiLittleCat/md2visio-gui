@@ -1,5 +1,7 @@
-﻿using md2visio.struc.figure;
+using md2visio.Api;
+using md2visio.struc.figure;
 using md2visio.vsdx;
+using md2visio.vsdx.@base;
 
 namespace md2visio.struc.journey
 {
@@ -18,9 +20,9 @@ namespace md2visio.struc.journey
             return set;
         }
 
-        public override void ToVisio(string path)
+        public override void ToVisio(string path, ConversionContext context, IVisioSession session)
         {
-            new VBuilderJo(this).Build(path);
+            new VBuilderJo(this, context, session).Build(path);
         }
     }
 }

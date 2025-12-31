@@ -1,14 +1,18 @@
-﻿using md2visio.struc.figure;
+﻿using md2visio.Api;
+using md2visio.struc.figure;
 using md2visio.struc.packet;
 using md2visio.vsdx.@base;
 
 namespace md2visio.vsdx
 {
-    internal class VBuilderPac(Packet figure) : VFigureBuilder<Packet>(figure)
+    internal class VBuilderPac : VFigureBuilder<Packet>
     {
+        public VBuilderPac(Packet figure, ConversionContext context, IVisioSession session)
+            : base(figure, context, session) { }
+
         protected override void ExecuteBuild()
         {
-            VDrawerPac drawer = new VDrawerPac(figure, VisioApp);
+            VDrawerPac drawer = new VDrawerPac(figure, _session.Application, _context);
             drawer.SortedNodes = OrderInnerNodes();
             drawer.Draw();
         }

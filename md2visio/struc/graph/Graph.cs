@@ -1,6 +1,8 @@
-﻿using md2visio.mermaid.cmn;
+using md2visio.Api;
+using md2visio.mermaid.cmn;
 using md2visio.struc.figure;
 using md2visio.vsdx;
+using md2visio.vsdx.@base;
 
 namespace md2visio.struc.graph
 {
@@ -47,9 +49,9 @@ namespace md2visio.struc.graph
             if (groupedNodes.Count == 0) return alignedGroupedNodes;
             if (alignedGroupedNodes.Count > 0) return alignedGroupedNodes;
 
-            foreach(GNode node in AlignInnerNodes())
+            foreach (GNode node in AlignInnerNodes())
             {
-                if(groupedNodes.ContainsKey(node.ID)) 
+                if (groupedNodes.ContainsKey(node.ID))
                     alignedGroupedNodes.AddLast(node);
             }
             return alignedGroupedNodes;
@@ -154,7 +156,7 @@ namespace md2visio.struc.graph
 
         public (GNode? linkedNode, RelativePos nodePos) NodesHavingInput(LinkedList<GNode> drawnNodes)
         {
-            LinkedList<GNode> nodes2draw = AlignGroupedNodes(); 
+            LinkedList<GNode> nodes2draw = AlignGroupedNodes();
             return LinkedNode(nodes2draw, this, drawnNodes);
         }
 
@@ -164,10 +166,9 @@ namespace md2visio.struc.graph
             if (!string.IsNullOrEmpty(frag)) Direction = frag;
         }
 
-        public override void ToVisio(string path)
+        public override void ToVisio(string path, ConversionContext context, IVisioSession session)
         {
-            new VBuilderG(this).Build(path);
+            new VBuilderG(this, context, session).Build(path);
         }
-
     }
 }

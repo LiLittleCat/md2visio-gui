@@ -1,19 +1,20 @@
-﻿using md2visio.struc.figure;
+using md2visio.Api;
+using md2visio.struc.figure;
 using md2visio.vsdx.@tool;
-using md2visio.main;
 using Microsoft.Office.Interop.Visio;
 
 namespace md2visio.vsdx.@base
 {
-    internal abstract class VFigureDrawer<T> :
-        VShapeDrawer where T : Figure
+    internal abstract class VFigureDrawer<T> : VShapeDrawer where T : Figure
     {
         protected T figure = Empty.Get<T>();
         protected Config config;
+        protected readonly ConversionContext _context;
 
-        public VFigureDrawer(T figure, Application visioApp) : base(visioApp)
+        public VFigureDrawer(T figure, Application visioApp, ConversionContext context) : base(visioApp)
         {
             this.figure = figure;
+            this._context = context;
             config = figure.Config;
         }
 
@@ -40,14 +41,16 @@ namespace md2visio.vsdx.@base
 
         public void SetLineColor(Shape shape, string configPath)
         {
-            if(config.GetString(configPath, out string color)) {
+            if (config.GetString(configPath, out string color))
+            {
                 SetShapeSheet(shape, "LineColor", $"THEMEGUARD({VColor.Create(color).RGB()})");
             }
         }
 
         public void SetTextColor(Shape shape, string configPath)
         {
-            if (config.GetString(configPath, out string color)) {
+            if (config.GetString(configPath, out string color))
+            {
                 shape.CellsU["Char.Color"].FormulaU = $"THEMEGUARD({VColor.Create(color).RGB()})";
             }
         }
@@ -62,23 +65,22 @@ namespace md2visio.vsdx.@base
         /// </summary>
         protected void PauseForViewing(int milliseconds = 200)
         {
-            if (AppConfig.Instance.Visible)
+            if (_context.Visible)
             {
                 System.Threading.Thread.Sleep(milliseconds);
             }
         }
 
         /// <summary>
-        /// 确保Visio应用程序在绘制时可见
+        /// 确保 Visio 应用程序在绘制时可见
         /// </summary>
         protected void EnsureVisible()
         {
-            if (AppConfig.Instance.Visible && visioApp != null)
+            if (_context.Visible && visioApp != null)
             {
                 visioApp.Visible = true;
                 visioApp.ActiveWindow?.Activate();
             }
         }
-
     }
 }

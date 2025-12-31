@@ -1,4 +1,5 @@
-﻿using md2visio.mermaid.cmn;
+﻿using md2visio.Api;
+using md2visio.mermaid.cmn;
 using md2visio.struc.figure;
 using md2visio.struc.graph;
 using md2visio.vsdx.@base;
@@ -11,12 +12,12 @@ namespace md2visio.vsdx
         FRONT, TAIL
     }
 
-    internal class VDrawerG : VFigureDrawer<Graph>        
+    internal class VDrawerG : VFigureDrawer<Graph>
     {
         LinkedList<GNode> drawnList = new LinkedList<GNode>();
-        public VDrawerG(Graph figure, Application visioApp): base(figure, visioApp)
-        {
-        }
+
+        public VDrawerG(Graph figure, Application visioApp, ConversionContext context)
+            : base(figure, visioApp, context) { }
 
         public override void Draw()
         {

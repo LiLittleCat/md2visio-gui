@@ -1,4 +1,5 @@
-﻿using md2visio.struc.xy;
+﻿using md2visio.Api;
+using md2visio.struc.xy;
 using md2visio.vsdx.@base;
 using System.Drawing;
 
@@ -10,9 +11,10 @@ namespace md2visio.vsdx
         bool vertical = true;
         VDrawerXy drawer;
 
-        public VBuilderXy(XyChart figure): base(figure)
+        public VBuilderXy(XyChart figure, ConversionContext context, IVisioSession session)
+            : base(figure, context, session)
         {
-            drawer = new VDrawerXy(figure, VisioApp);
+            drawer = new VDrawerXy(figure, _session.Application, _context);
         }
 
         protected override void ExecuteBuild()

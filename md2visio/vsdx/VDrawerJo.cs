@@ -1,4 +1,5 @@
-﻿using md2visio.struc.figure;
+﻿using md2visio.Api;
+using md2visio.struc.figure;
 using md2visio.struc.journey;
 using md2visio.vsdx.@base;
 using md2visio.vsdx.@tool;
@@ -7,9 +8,10 @@ using System.Drawing;
 
 namespace md2visio.vsdx
 {
-    internal class VDrawerJo(Journey jo, Application visioApp) : 
-        VFigureDrawer<Journey>(jo, visioApp)
+    internal class VDrawerJo : VFigureDrawer<Journey>
     {
+        public VDrawerJo(Journey jo, Application visioApp, ConversionContext context)
+            : base(jo, visioApp, context) { }
         VBoundary drawBound = Empty.Get<VBoundary>();    
         VBoundary allTaskBound = new VBoundary();
         Dictionary<string, VColor> colorMap = new();

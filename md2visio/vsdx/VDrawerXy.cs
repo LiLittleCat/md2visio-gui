@@ -1,12 +1,14 @@
-﻿using md2visio.struc.xy;
+﻿using md2visio.Api;
+using md2visio.struc.xy;
 using Microsoft.Office.Interop.Visio;
 using md2visio.vsdx.@base;
 
 namespace md2visio.vsdx
 {
-    internal class VDrawerXy(XyChart figure, Application visioApp) : 
-        VFigureDrawer<XyChart>(figure, visioApp)
+    internal class VDrawerXy : VFigureDrawer<XyChart>
     {
+        public VDrawerXy(XyChart figure, Application visioApp, ConversionContext context)
+            : base(figure, visioApp, context) { }
         public double ChartWidth { get; set; }
         public double ChartHeight { get; set; }
         public bool Vertical { get; set; }

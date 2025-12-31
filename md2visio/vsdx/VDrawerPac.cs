@@ -1,4 +1,5 @@
-﻿using md2visio.struc.figure;
+﻿using md2visio.Api;
+using md2visio.struc.figure;
 using md2visio.struc.packet;
 using md2visio.vsdx.@base;
 using Microsoft.Office.Interop.Visio;
@@ -6,9 +7,10 @@ using System.Drawing;
 
 namespace md2visio.vsdx
 {
-    internal class VDrawerPac(Packet pac, Application visioApp) : 
-        VFigureDrawer<Packet>(pac, visioApp)
+    internal class VDrawerPac : VFigureDrawer<Packet>
     {
+        public VDrawerPac(Packet pac, Application visioApp, ConversionContext context)
+            : base(pac, visioApp, context) { }
         int lineIndex = 0;
         int bitNumInLine = 0;
         readonly VBoundary drawBound = new VBoundary();

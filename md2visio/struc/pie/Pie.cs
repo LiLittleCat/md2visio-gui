@@ -1,5 +1,7 @@
-﻿using md2visio.struc.figure;
+using md2visio.Api;
+using md2visio.struc.figure;
 using md2visio.vsdx;
+using md2visio.vsdx.@base;
 
 namespace md2visio.struc.pie
 {
@@ -7,7 +9,8 @@ namespace md2visio.struc.pie
     {
         public bool ShowData { get; set; } = false;
 
-        public Pie() { 
+        public Pie()
+        {
         }
 
         public double TotalNum()
@@ -20,9 +23,9 @@ namespace md2visio.struc.pie
             return total;
         }
 
-        public override void ToVisio(string path)
+        public override void ToVisio(string path, ConversionContext context, IVisioSession session)
         {
-            new VBuilderPie(this).Build(path);
+            new VBuilderPie(this, context, session).Build(path);
         }
     }
 }

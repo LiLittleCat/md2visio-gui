@@ -1,4 +1,5 @@
-﻿using md2visio.struc.figure;
+﻿using md2visio.Api;
+using md2visio.struc.figure;
 using md2visio.struc.pie;
 using md2visio.vsdx.@base;
 using md2visio.vsdx.tool;
@@ -7,9 +8,10 @@ using System.Drawing;
 
 namespace md2visio.vsdx
 {
-    internal class VDrawerPie(Pie figure, Application visioApp) : 
-        VFigureDrawer<Pie>(figure, visioApp)
+    internal class VDrawerPie : VFigureDrawer<Pie>
     {
+        public VDrawerPie(Pie figure, Application visioApp, ConversionContext context)
+            : base(figure, visioApp, context) { }
         double drawnAngle = 0;
         VBoundary tagBound = Empty.Get<VBoundary>();
         double total = 0;

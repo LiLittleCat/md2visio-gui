@@ -1,12 +1,17 @@
-﻿using md2visio.mermaid.cmn;
+﻿using md2visio.Api;
+using md2visio.mermaid.cmn;
 using md2visio.mermaid.pie;
 using md2visio.struc.figure;
+using md2visio.vsdx.@base;
 
 namespace md2visio.struc.pie
 {
-    internal class PieBuilder(SttIterator iter) : FigureBuilder(iter)
+    internal class PieBuilder : FigureBuilder
     {
         readonly Pie pie = new();
+
+        public PieBuilder(SttIterator iter, ConversionContext context, IVisioSession session)
+            : base(iter, context, session) { }
 
         public override void Build(string outputFile)
         {
@@ -16,7 +21,7 @@ namespace md2visio.struc.pie
                 if (cur is SttMermaidStart) { }
                 if (cur is SttMermaidClose)
                 {
-                    pie.ToVisio(outputFile);
+                    pie.ToVisio(outputFile, _context, _session);
                     break;
                 }
                 if (cur is PieSttKeyword) { BuildKeyword(); }

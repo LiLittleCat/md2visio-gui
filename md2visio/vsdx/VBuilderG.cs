@@ -1,13 +1,17 @@
-﻿using md2visio.struc.graph;
+﻿using md2visio.Api;
+using md2visio.struc.graph;
 using md2visio.vsdx.@base;
 
 namespace md2visio.vsdx
 {
-    internal class VBuilderG(Graph figure) : VFigureBuilder<Graph>(figure)
+    internal class VBuilderG : VFigureBuilder<Graph>
     {
-        override protected void ExecuteBuild() 
+        public VBuilderG(Graph figure, ConversionContext context, IVisioSession session)
+            : base(figure, context, session) { }
+
+        override protected void ExecuteBuild()
         {
-            new VDrawerG(figure, VisioApp).Draw();
-        }        
+            new VDrawerG(figure, _session.Application, _context).Draw();
+        }
     }
 }

@@ -1,6 +1,8 @@
-﻿using md2visio.mermaid.cmn;
+﻿using md2visio.Api;
+using md2visio.mermaid.cmn;
 using md2visio.mermaid.journey;
 using md2visio.struc.figure;
+using md2visio.vsdx.@base;
 
 namespace md2visio.struc.journey
 {
@@ -8,7 +10,8 @@ namespace md2visio.struc.journey
     {
         Journey journey = new Journey();
         JoSection curSection = Empty.Get<JoSection>();
-        public JoBuilder(SttIterator iter) : base(iter) { }
+        public JoBuilder(SttIterator iter, ConversionContext context, IVisioSession session)
+            : base(iter, context, session) { }
 
         public override void Build(string outputFile)
         {
@@ -18,7 +21,7 @@ namespace md2visio.struc.journey
                 if (cur is SttMermaidStart) { }
                 if (cur is SttMermaidClose)
                 {
-                    journey.ToVisio(outputFile);
+                    journey.ToVisio(outputFile, _context, _session);
                     break;
                 }
                 if (cur is JoSttKeyword)    { BuildKeyword(); }

@@ -1,12 +1,17 @@
-﻿using md2visio.mermaid.cmn;
+﻿using md2visio.Api;
+using md2visio.mermaid.cmn;
 using md2visio.mermaid.xy;
 using md2visio.struc.figure;
+using md2visio.vsdx.@base;
 
 namespace md2visio.struc.xy
 {
-    internal class XyBuilder(SttIterator iter) : FigureBuilder(iter)
+    internal class XyBuilder : FigureBuilder
     {
         readonly XyChart xy = new();
+
+        public XyBuilder(SttIterator iter, ConversionContext context, IVisioSession session)
+            : base(iter, context, session) { }
 
         public override void Build(string outputFile)
         {
@@ -14,7 +19,7 @@ namespace md2visio.struc.xy
             {
                 SynState cur = iter.Next();
                 if (cur is SttMermaidStart) { }
-                if (cur is SttMermaidClose) { xy.ToVisio(outputFile);  break; }
+                if (cur is SttMermaidClose) { xy.ToVisio(outputFile, _context, _session);  break; }
                 if (cur is XySttKeyword)    { BuildKeyword(); }
                 if (cur is SttComment)      { xy.Config.LoadUserDirectiveFromComment(cur.Fragment); }
                 if (cur is SttFrontMatter)  { xy.Config.LoadUserFrontMatter(cur.Fragment); }

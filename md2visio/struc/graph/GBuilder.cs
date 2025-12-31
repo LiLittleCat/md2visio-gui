@@ -1,6 +1,8 @@
-﻿using md2visio.mermaid.cmn;
+using md2visio.Api;
+using md2visio.mermaid.cmn;
 using md2visio.mermaid.graph;
 using md2visio.struc.figure;
+using md2visio.vsdx.@base;
 
 namespace md2visio.struc.graph
 {
@@ -13,9 +15,9 @@ namespace md2visio.struc.graph
         List<GNode> fromNodes = EmptyList, toNodes = EmptyList;
         GEdge edge = Empty.Get<GEdge>();
 
-        public GBuilder(SttIterator iter) : base(iter)
+        public GBuilder(SttIterator iter, ConversionContext context, IVisioSession session)
+            : base(iter, context, session)
         {
-
         }
 
         public override void Build(string outputFile)
@@ -37,11 +39,11 @@ namespace md2visio.struc.graph
                         ConnectNodes();
                     }
                 }
-                else if (cur is GSttLinkStart)      BuildEdge();
-                else if (cur is GSttNoLabelLink)    BuildEdge();
-                else if (cur is SttComment)     { graph.Config.LoadUserDirectiveFromComment(cur.Fragment); }
+                else if (cur is GSttLinkStart) BuildEdge();
+                else if (cur is GSttNoLabelLink) BuildEdge();
+                else if (cur is SttComment) { graph.Config.LoadUserDirectiveFromComment(cur.Fragment); }
                 else if (cur is SttFrontMatter) { graph.Config.LoadUserFrontMatter(cur.Fragment); }
-                else if (cur is SttFinishFlag)  { }
+                else if (cur is SttFinishFlag) { }
             }
         }
 
@@ -136,7 +138,7 @@ namespace md2visio.struc.graph
             string frag = iter.Current.Fragment;
 
             if (frag == "graph" || frag == "flowchart")
-            {                
+            {
                 graph.SetParam(iter.Next().CompoList);
                 stack.Push(graph);
             }
@@ -181,9 +183,8 @@ namespace md2visio.struc.graph
             if (stack.Count == 0) return;
 
             Container nc = stack.First();
-            if (nc is Figure) nc.DownCast<Figure>().ToVisio(outputFile);
+            if (nc is Figure figure) figure.ToVisio(outputFile, _context, _session);
             stack.Clear();
         }
-
     }
 }
