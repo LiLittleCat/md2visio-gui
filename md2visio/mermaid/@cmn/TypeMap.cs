@@ -3,11 +3,13 @@ using md2visio.mermaid.graph.@internal;
 using md2visio.mermaid.journey;
 using md2visio.mermaid.packet;
 using md2visio.mermaid.pie;
+using md2visio.mermaid.sequence;
 using md2visio.mermaid.xy;
 using md2visio.struc.graph;
 using md2visio.struc.journey;
 using md2visio.struc.packet;
 using md2visio.struc.pie;
+using md2visio.struc.sequence;
 using md2visio.struc.xy;
 
 namespace md2visio.mermaid.cmn
@@ -20,6 +22,7 @@ namespace md2visio.mermaid.cmn
             { "journey", typeof(JoSttKeyword) },
             { "pie", typeof(PieSttKeyword) },
             { "packet-beta", typeof(PacSttKeyword) }, { "packet", typeof(PacSttKeyword) },
+            { "sequenceDiagram", typeof(SeqSttKeyword) },
             { "xychart-beta", typeof(XySttKeyword) }, { "xychart", typeof(XySttKeyword) },
         };
 
@@ -29,6 +32,7 @@ namespace md2visio.mermaid.cmn
             { "journey", typeof(JoSttChar) },
             { "pie", typeof(PieSttChar) },
             { "packet-beta", typeof(PaSttChar) }, { "packet", typeof(PaSttChar) },
+            { "sequenceDiagram", typeof(SeqSttChar) },
             { "xychart-beta", typeof(XySttChar) }, { "xychart", typeof(XySttChar) },
         };
 
@@ -38,6 +42,7 @@ namespace md2visio.mermaid.cmn
             { "journey", typeof(JoBuilder) },
             { "pie", typeof(PieBuilder) },
             { "packet-beta", typeof(PacBuilder) }, { "packet", typeof(PacBuilder) },
+            { "sequenceDiagram", typeof(SeqBuilder) },
             { "xychart-beta", typeof(XyBuilder) }, { "xychart", typeof(XyBuilder) },
         };
 
@@ -47,6 +52,7 @@ namespace md2visio.mermaid.cmn
             {typeof(Journey).Name, "journey"},
             {typeof(Packet).Name, "packet"},
             {typeof(Pie).Name, "pie"},
+            {typeof(Sequence).Name, "sequence"},
             {typeof(XyChart).Name, "xyChart"},
         };
     }

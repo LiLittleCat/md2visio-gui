@@ -1,35 +1,51 @@
 config:
-    # mermaid.mermaidAPI.defaultConfig.sequence
+    # Mermaid时序图配置 - 针对md2visio优化
     sequence:
-        useMaxWidth: true
-        hideUnusedParticipants: false
-        activationWidth: 10
-        diagramMarginX: 50
-        diagramMarginY: 10
-        actorMargin: 50
-        width: 150
-        height: 65
-        boxMargin: 10
-        boxTextMargin: 5
-        noteMargin: 10
-        messageMargin: 35
-        messageAlign: center
-        mirrorActors: true
-        forceMenus: false
-        bottomMarginAdj: 1
-        rightAngles: false
-        showSequenceNumbers: false
-        actorFontSize: 14
-        actorFontFamily: '"Open Sans", sans-serif'
-        actorFontWeight: 400
-        noteFontSize: 14
-        noteFontFamily: '"trebuchet ms", verdana, arial, sans-serif'
-        noteFontWeight: 400
-        noteAlign: center
-        messageFontSize: 16
-        messageFontFamily: '"trebuchet ms", verdana, arial, sans-serif'
-        messageFontWeight: 400
-        wrap: false
-        wrapPadding: 10
-        labelBoxWidth: 50
-        labelBoxHeight: 20
+        # 布局参数 (单位: mm)
+        diagramMarginX: 50          # 图表左右边距
+        diagramMarginY: 20          # 图表上下边距
+        participantSpacing: 100     # 参与者间距
+        messageSpacing: 25          # 消息间距
+        
+        # 参与者样式
+        participantWidth: 60        # 参与者框宽度
+        participantHeight: 30       # 参与者框高度
+        participantFontSize: 12     # 参与者字体大小
+        participantBgColor: "#E1F5FE"     # 参与者背景色
+        participantBorderColor: "#0277BD" # 参与者边框色
+        mirrorActors: true          # 底部显示参与者镜像
+        
+        # 消息样式
+        messageFontSize: 10         # 消息字体大小
+        messageColor: "#333333"     # 消息线条颜色
+        messageWeight: 1            # 消息线条粗细(pt)
+        
+        # 激活框样式
+        activationWidth: 8          # 激活框宽度
+        activationBgColor: "#FFFFCC"      # 激活框背景色
+        activationBorderColor: "#FFA000"  # 激活框边框色
+        activationNestOffset: 2     # 嵌套激活框偏移量
+        
+        # 自调用样式
+        selfCallWidth: 20           # 自调用圆弧宽度
+        selfCallHeight: 15          # 自调用圆弧高度
+        selfCallTextOffset: 8       # 自调用文本偏移量
+        
+        # 生命线样式
+        lifelinePattern: 2          # 生命线样式(2=虚线)
+        lifelineWeight: 0.5         # 生命线粗细(pt)
+        lifelineColor: "#666666"    # 生命线颜色
+        
+        # 箭头样式
+        arrowSize: 4                # 箭头大小
+        solidArrow: 4               # 实心箭头样式ID
+        
+        # 文本对齐
+        messageTextAlign: center    # 消息文本对齐方式
+        participantTextAlign: center # 参与者文本对齐方式
+        
+        # 高级选项
+        showSequenceNumbers: false  # 显示序列号
+        rightAngles: false         # 使用直角连接
+        wrap: false                # 文本自动换行
+        wrapPadding: 10            # 换行内边距

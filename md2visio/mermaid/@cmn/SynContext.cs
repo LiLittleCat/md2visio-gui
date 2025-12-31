@@ -29,7 +29,8 @@ namespace md2visio.mermaid.cmn
             InputFile = inputFile;
 
             try {
-                string[] lines = File.ReadAllLines(inputFile);
+                // 明确指定UTF-8编码读取文件
+                string[] lines = File.ReadAllLines(inputFile, Encoding.UTF8);
 
                 foreach (string line in lines) incoming.Append(line).Append('\n');
             } catch (Exception ex) { 
