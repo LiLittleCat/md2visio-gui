@@ -10,6 +10,12 @@ The key feature of this project is providing an intuitive graphical user interfa
 
 > Conversion Example: ![Example](https://img-cdn.ccrui.cn/2025/06/23/685831c3cd15c.png)
 
+## 🆕 What's New in v1.04
+
+- **Class Diagram Support** (`classDiagram`) - Full support for UML class diagrams with all 8 relationship types, annotations, and namespace grouping
+- **Sugiyama Layout Algorithm** - Professional hierarchical layout for class diagrams, producing clean and readable output
+- **Improved Flowchart Layout** - BFS tree layout for better structure visualization
+
 ## ✨ Credits & Acknowledgments
 
 This project is a fork of [Megre/md2visio](https://github.com/Megre/md2visio).
@@ -37,12 +43,12 @@ Special thanks to **Megre** for the outstanding work and open-source contributio
 |-------------|--------|---------------|
 | **graph / flowchart** | ✅ Supported | ✅ |
 | **sequenceDiagram** | ✅ Supported | ✅ |
+| **classDiagram** | ✅ Supported | ✅ |
 | **journey** | ✅ Supported | ✅ |
 | **pie** | ✅ Supported | ✅ |
 | **packet-beta** | ✅ Supported | ✅ |
 | **xychart-beta** | ✅ Supported | - |
 | **Configuration** (frontmatter/directive) | ✅ Supported | - |
-| classDiagram | ❌ Not yet | - |
 | stateDiagram | ❌ Not yet | - |
 | erDiagram | ❌ Not yet | - |
 | gantt | ❌ Not yet | - |
@@ -66,12 +72,27 @@ Special thanks to **Megre** for the outstanding work and open-source contributio
 
 ## 🛠️ Usage Guide
 
+### Input File Format
+
+Your Markdown file must contain Mermaid diagrams wrapped in fenced code blocks:
+
+````markdown
+```mermaid
+graph LR
+    A[Start] --> B[Process]
+    B --> C[End]
+```
+````
+
+A single `.md` file can contain multiple Mermaid diagrams - each will be converted to a separate Visio file.
+
 ### For End Users
 
 1.  **Download**: Go to [Releases](https://github.com/konbakuyomu/md2visio-gui/releases) and download the latest version
 2.  **Extract**: Unzip to any location
 3.  **Prerequisites**: Ensure **Microsoft Visio** desktop version is installed
 4.  **Run**: Double-click `md2visio.GUI.exe` to launch
+5.  **Convert**: Drag your `.md` file into the window, or click "Browse" to select it
 
 ### For Developers
 

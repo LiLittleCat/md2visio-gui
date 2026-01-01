@@ -10,6 +10,12 @@
 
 > 转换效果：![示例](https://img-cdn.ccrui.cn/2025/06/23/685831c3cd15c.png)
 
+## 🆕 v1.04 更新内容
+
+- **类图支持** (`classDiagram`) - 完整支持 UML 类图，包含全部 8 种关系类型、注解和命名空间分组
+- **Sugiyama 布局算法** - 专业的层次化布局，生成清晰易读的类图
+- **流程图布局改进** - BFS 树形布局，结构更清晰
+
 ## ✨ 项目缘起与致谢
 
 本项目是在 [Megre/md2visio](https://github.com/Megre/md2visio) 这个优秀项目的基础上进行二次开发的。
@@ -39,12 +45,12 @@
 |---------|------|----------|
 | **graph / flowchart** (流程图) | ✅ 支持 | ✅ |
 | **sequenceDiagram** (时序图) | ✅ 支持 | ✅ |
+| **classDiagram** (类图) | ✅ 支持 | ✅ |
 | **journey** (用户旅程图) | ✅ 支持 | ✅ |
 | **pie** (饼图) | ✅ 支持 | ✅ |
 | **packet-beta** (数据包图) | ✅ 支持 | ✅ |
 | **xychart-beta** (XY图表) | ✅ 支持 | - |
 | **Configuration** (配置指令) | ✅ 支持 | - |
-| classDiagram (类图) | ❌ 暂不支持 | - |
 | stateDiagram (状态图) | ❌ 暂不支持 | - |
 | erDiagram (实体关系图) | ❌ 暂不支持 | - |
 | gantt (甘特图) | ❌ 暂不支持 | - |
@@ -68,12 +74,27 @@
 
 ## 🛠️ 使用指南
 
+### 输入文件格式
+
+您的 Markdown 文件必须包含用代码块包裹的 Mermaid 图表：
+
+````markdown
+```mermaid
+graph LR
+    A[开始] --> B[处理]
+    B --> C[结束]
+```
+````
+
+一个 `.md` 文件可以包含多个 Mermaid 图表，每个图表都会被转换为单独的 Visio 文件。
+
 ### 普通用户
 
 1.  **下载**: 前往 [Releases](https://github.com/konbakuyomu/md2visio-gui/releases) 页面，下载最新版本。
 2.  **解压**: 将压缩包解压到任意位置。
 3.  **前提条件**: 确保已安装 **Microsoft Visio** 桌面版。
 4.  **运行**: 双击 `md2visio.GUI.exe` 启动程序。
+5.  **转换**: 将 `.md` 文件拖入窗口，或点击"浏览"按钮选择文件。
 
 ### 开发者
 
