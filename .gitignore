@@ -75,3 +75,5 @@ Snipaste_*.png
 # Temporary test files
 test_*.md
 test*.vsdx
+
+.idea/

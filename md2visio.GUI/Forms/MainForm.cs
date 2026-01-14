@@ -270,7 +270,8 @@ namespace md2visio.GUI.Forms
                 ("✅ 用户旅程图", "journey"),
                 ("✅ 数据包图", "packet"),
                 ("✅ XY图表", "xychart"),
-                ("✅ 时序图", "sequence")
+                ("✅ 时序图", "sequence"),
+                ("✅ 实体关系图", "er")
             };
 
             foreach (var (icon, name) in supportedTypes)

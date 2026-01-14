@@ -279,7 +279,7 @@ ConfigMap = {
 | XY图表 | `xychart-beta` | ✅ 完整支持 | `xychart-beta; x-axis [a,b,c]` |
 | 类图 | `classDiagram` | ❌ 未实现 | - |
 | 状态图 | `stateDiagram` | ❌ 未实现 | - |
-| ER图 | `erDiagram` | ❌ 未实现 | - |
+| ER图 | `erDiagram` | ✅ 支持 | `erDiagram; CUSTOMER \|\|--o{ ORDER : places` |
 | 甘特图 | `gantt` | ❌ 未实现 | - |
 
 ---
