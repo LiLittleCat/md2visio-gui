@@ -551,19 +551,25 @@ namespace md2visio.GUI.Forms
                 if (result.IsSuccess)
                 {
                     _openOutputButton.Enabled = true;
-                    MessageBox.Show($"转换成功！\n生成了 {result.OutputFiles?.Length} 个文件。", "成功", 
-                        MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    ShowUserMessage(
+                        $"转换成功！\n生成了 {result.OutputFiles?.Length} 个文件。",
+                        "成功",
+                        MessageBoxIcon.Information);
                 }
                 else
                 {
-                    MessageBox.Show($"转换失败！\n错误: {result.ErrorMessage}", "错误", 
-                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    ShowUserMessage(
+                        $"转换失败！\n错误: {result.ErrorMessage}",
+                        "错误",
+                        MessageBoxIcon.Error);
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"转换过程中发生错误:\n{ex.Message}", "错误", 
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                ShowUserMessage(
+                    $"转换过程中发生错误:\n{ex.Message}",
+                    "错误",
+                    MessageBoxIcon.Error);
             }
             finally
             {
@@ -659,6 +665,17 @@ namespace md2visio.GUI.Forms
         {
             _logTextBox.AppendText($"{message}\n");
             _logTextBox.ScrollToCaret();
+        }
+
+        private void ShowUserMessage(string message, string caption, MessageBoxIcon icon)
+        {
+            if (WindowState == FormWindowState.Minimized)
+            {
+                WindowState = FormWindowState.Normal;
+            }
+            Activate();
+            BringToFront();
+            MessageBox.Show(this, message, caption, MessageBoxButtons.OK, icon);
         }
 
         private async void OnCheckVisioClick(object? sender, EventArgs e)
